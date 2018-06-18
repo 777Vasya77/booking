@@ -6,9 +6,12 @@
   var ESC_KEYCODE = 27;
   var PIN_HEIGHT = 70;
   var PIN_WIDTH = 50;
+  var PIN_SHARP_END_HEIGHT = 22;
   var AUTHOR_COUNT = 8;
   var MIN_GUEST = 0;
   var MAX_ROOM = 100;
+  var MAP_TOP_BORDER = 130;
+  var MAP_BOTTOM_BORDER = 630;
   var OFFER_TITLES = [
     'Большая уютная квартира',
     'Маленькая неуютная квартира',
@@ -41,6 +44,7 @@
 
   var adForm = document.querySelector('.ad-form');
   var adFormFieldsets = adForm.querySelectorAll('fieldset');
+  var map = document.querySelector('.map');
   var mapPinMain = document.querySelector('.map__pin--main');
   var mapPinTemplate = document.querySelector('#map-card-template').content.querySelector('.map__pin');
   var mapCardTemplate = document.querySelector('#map-card-template').content.querySelector('.map__card');
@@ -78,27 +82,10 @@
     return keys[Math.floor(Math.random() * keys.length)];
   };
 
-  var returnTitle = function (objKey, obj) {
-    var title;
-
-    for (var key in obj) {
-      if (key === objKey) {
-        title = obj[objKey];
-      }
-    }
-
-    return title;
-  };
-
   var shuffleArray = function (array) {
-    for (var i = array.length - 1; i >= 0; i--) {
-      var randomIndex = Math.floor(Math.random() * (i + 1));
-      var item = array[randomIndex];
-      array[randomIndex] = array[i];
-      array[i] = item;
-    }
-
-    return array;
+    return array.sort(function () {
+      return 0.5 - Math.random();
+    });
   };
 
   var createRandomLengthArray = function (array) {
@@ -192,7 +179,7 @@
     adElement.querySelector('.popup__title').textContent = ad.offer.title;
     adElement.querySelector('.popup__text--address').textContent = ad.offer.address;
     adElement.querySelector('.popup__text--price').textContent = ad.offer.price + '₽/ночь';
-    adElement.querySelector('.popup__type').textContent = returnTitle(ad.offer.type, OFFER_TYPES);
+    adElement.querySelector('.popup__type').textContent = OFFER_TYPES[ad.offer.type];
     adElement.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
     adElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
     clearNode(adElement.querySelector('.popup__features')).appendChild(renderFeatures(ad.offer.features));
@@ -280,7 +267,7 @@
     var pinHeight = pinImg.offsetHeight;
     var pinWidth = pinImg.offsetWidth;
 
-    addressInput.value = (pin.offsetLeft + pinWidth / 2) + ', ' + (pin.offsetTop + pinHeight / 2);
+    addressInput.value = (pin.offsetLeft + pinWidth / 2) + ', ' + (pin.offsetTop + pinHeight + PIN_SHARP_END_HEIGHT);
   };
 
   addAddressToInput(mapPinMain);
@@ -344,7 +331,7 @@
   };
 
   offerType.addEventListener('change', function (evt) {
-    var priceValue = returnTitle(evt.target.value, PRICE_BY_TYPE);
+    var priceValue = PRICE_BY_TYPE[evt.target.value];
 
     price.placeholder = priceValue;
     price.min = priceValue;
@@ -363,6 +350,57 @@
   capacity.addEventListener('change', function () {
     removeError(capacity);
     checkRoomCapacity();
+  });
+
+  mapPinMain.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+
+    var startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      var shift = {
+        x: startCoords.x - moveEvt.clientX,
+        y: startCoords.y - moveEvt.clientY
+      };
+
+      startCoords = {
+        x: moveEvt.clientX,
+        y: moveEvt.clientY
+      };
+
+      if (mapPinMain.offsetTop - shift.y > MAP_BOTTOM_BORDER) {
+        mapPinMain.style.top = MAP_BOTTOM_BORDER + 'px';
+      } else if (mapPinMain.offsetTop - shift.y < MAP_TOP_BORDER) {
+        mapPinMain.style.top = MAP_TOP_BORDER + 'px';
+      } else {
+        mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + 'px';
+      }
+
+      if (mapPinMain.offsetLeft - shift.x <= 0) {
+        mapPinMain.style.left = '0px';
+      } else if (mapPinMain.offsetLeft - shift.x > (map.offsetWidth - mapPinMain.offsetWidth)) {
+        mapPinMain.style.left = (map.offsetWidth - mapPinMain.offsetWidth) + 'px';
+      } else {
+        mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + 'px';
+      }
+
+      addAddressToInput(mapPinMain);
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
   });
 
 }());
