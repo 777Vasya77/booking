@@ -10,11 +10,8 @@
   var adForm = document.querySelector('.ad-form');
   var map = document.querySelector('.map');
   var mapPinMain = document.querySelector('.map__pin--main');
-  var mapPinsBlock = document.querySelector('.map__pins');
   var mapBlock = document.querySelector('.map');
   var mapFilter = document.querySelector('.map__filters-container');
-
-  var adsData = window.data.createFakeData(8);
 
   var onPopupEscPress = function (evt) {
     if (evt.keyCode === ESC_KEYCODE) {
@@ -25,19 +22,23 @@
   var pageActivate = function () {
     adForm.classList.remove('ad-form--disabled');
     mapBlock.classList.remove('map--faded');
-    mapPinsBlock.appendChild(window.pin.createPinsList(adsData));
+    window.utils.disabledEToggle(window.form.elements);
+    window.pin.createPinsList();
   };
 
   window.form.addAddressToInput(mapPinMain);
+  window.utils.disabledEToggle(window.form.elements);
 
   mapPinMain.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === ENTER_KEYCODE) {
+    if (evt.keyCode === ENTER_KEYCODE && mapBlock.classList.contains('map--faded')) {
       pageActivate();
     }
   });
 
   mapPinMain.addEventListener('mouseup', function () {
-    pageActivate();
+    if (mapBlock.classList.contains('map--faded')) {
+      pageActivate();
+    }
   });
 
   var checkMapBorder = function (shift) {
@@ -96,7 +97,7 @@
   });
 
   window.map = {
-    openFullInfoPopup: function (evt) {
+    openFullInfoPopup: function (evt, adsData) {
       var target = evt.currentTarget;
       var img = target.querySelector('img');
 
