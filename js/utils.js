@@ -2,7 +2,24 @@
 
 (function () {
 
+  var ENTER_KEYCODE = 13;
+  var ESC_KEYCODE = 27;
+
   window.utils = {
+    isEscKeycode: function (keycode) {
+      return (ESC_KEYCODE === keycode);
+    },
+
+    isEnterKeycode: function (keycode) {
+      return (ENTER_KEYCODE === keycode);
+    },
+
+    disabledEToggle: function (array) {
+      array.forEach(function (el) {
+        el.disabled = !el.disabled;
+      });
+    },
+
     generateRandomNumber: function (from, to) {
       return Math.floor(Math.random() * (to - from + 1) + from);
     },

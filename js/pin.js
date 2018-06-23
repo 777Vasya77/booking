@@ -6,7 +6,6 @@
   var PIN_WIDTH = 50;
   var mapPinTemplate = document.querySelector('#map-card-template').content.querySelector('.map__pin');
 
-
   var renderPin = function (pin) {
     var pinElement = mapPinTemplate.cloneNode(true);
     var pinImg = pinElement.querySelector('img');
@@ -21,20 +20,34 @@
   };
 
   window.pin = {
-    createPinsList: function (pinsData) {
-      var fragment = document.createDocumentFragment();
+    data: [],
+    createPinsList: function () {
+      var mapPinsBlock = document.querySelector('.map__pins');
 
-      for (var i = 0; i < pinsData.length; i++) {
-        var pin = renderPin(pinsData[i]);
+      window.backend.getData(function (response) {
 
-        pin.addEventListener('click', function (evt) {
-          window.map.openFullInfoPopup(evt);
-        });
+        var fragment = document.createDocumentFragment();
+        for (var i = 0; i < response.length; i++) {
+          var pin = renderPin(response[i]);
 
-        fragment.appendChild(pin);
-      }
+          pin.addEventListener('click', function (evt) {
+            window.map.openFullInfoPopup(evt, response);
+          });
 
-      return fragment;
+          fragment.appendChild(pin);
+        }
+
+        mapPinsBlock.appendChild(fragment);
+      });
+    },
+    deletePins: function () {
+      var pins = document.querySelector('.map__pins').querySelectorAll('.map__pin');
+
+      pins.forEach(function (pin) {
+        if (!pin.classList.contains('map__pin--main')) {
+          pin.remove();
+        }
+      });
     }
   };
 
