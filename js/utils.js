@@ -14,6 +14,18 @@
       return (ENTER_KEYCODE === keycode);
     },
 
+    resetSelect: function (array) {
+      array.forEach(function (el) {
+        el.selectedIndex = 0;
+      });
+    },
+
+    resetCheckbox: function (array) {
+      array.forEach(function (el) {
+        el.checked = false;
+      });
+    },
+
     disabledEToggle: function (array) {
       array.forEach(function (el) {
         el.disabled = !el.disabled;

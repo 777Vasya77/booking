@@ -2,8 +2,6 @@
 
 (function () {
 
-  var ENTER_KEYCODE = 13;
-  var ESC_KEYCODE = 27;
   var MAP_TOP_BORDER = 130;
   var MAP_BOTTOM_BORDER = 630;
 
@@ -14,8 +12,26 @@
   var mapFilter = document.querySelector('.map__filters-container');
 
   var onPopupEscPress = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
+    if (window.utils.isEscKeycode(evt.keyCode)) {
       window.map.closePopup();
+      window.pin.inactiveAll();
+    }
+  };
+
+  var onMapPinMainMouseUp = function () {
+    if (mapBlock.classList.contains('map--faded')) {
+      pageActivate();
+    }
+  };
+
+  var onCloseFullInfoPopupClick = function () {
+    window.map.closePopup();
+    window.pin.inactiveAll();
+  };
+
+  var onMapPinMainKeyDown = function (evt) {
+    if (window.utils.isEnterKeycode(evt.keyCode) && mapBlock.classList.contains('map--faded')) {
+      pageActivate();
     }
   };
 
@@ -24,22 +40,14 @@
     mapBlock.classList.remove('map--faded');
     window.utils.disabledEToggle(window.form.elements);
     window.pin.createPinsList();
+    window.filter.elementsToggle();
   };
 
   window.form.addAddressToInput(mapPinMain);
   window.utils.disabledEToggle(window.form.elements);
 
-  mapPinMain.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === ENTER_KEYCODE && mapBlock.classList.contains('map--faded')) {
-      pageActivate();
-    }
-  });
-
-  mapPinMain.addEventListener('mouseup', function () {
-    if (mapBlock.classList.contains('map--faded')) {
-      pageActivate();
-    }
-  });
+  mapPinMain.addEventListener('keydown', onMapPinMainKeyDown);
+  mapPinMain.addEventListener('mouseup', onMapPinMainMouseUp);
 
   var checkMapBorder = function (shift) {
     if (mapPinMain.offsetTop - shift.y > MAP_BOTTOM_BORDER) {
@@ -98,7 +106,12 @@
 
   window.map = {
     openFullInfoPopup: function (evt, adsData) {
+
+      window.pin.inactiveAll();
+
       var target = evt.currentTarget;
+      window.pin.active(target);
+
       var img = target.querySelector('img');
 
       var ad = adsData.filter(function (elem) {
@@ -113,9 +126,7 @@
 
       var closeFullInfoPopup = adElem.querySelector('.popup__close');
 
-      closeFullInfoPopup.addEventListener('click', function () {
-        window.map.closePopup();
-      });
+      closeFullInfoPopup.addEventListener('click', onCloseFullInfoPopupClick);
       document.addEventListener('keydown', onPopupEscPress);
     },
 

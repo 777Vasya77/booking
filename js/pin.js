@@ -4,6 +4,9 @@
 
   var PIN_HEIGHT = 70;
   var PIN_WIDTH = 50;
+  var MAX_DISPLAY_PIN = 5;
+  var pinsData;
+  var mapPinsBlock = document.querySelector('.map__pins');
   var mapPinTemplate = document.querySelector('#map-card-template').content.querySelector('.map__pin');
 
   var renderPin = function (pin) {
@@ -19,34 +22,59 @@
     return pinElement;
   };
 
-  window.pin = {
-    data: [],
-    createPinsList: function () {
-      var mapPinsBlock = document.querySelector('.map__pins');
+  var update = function () {
+    window.pin.delete();
+    window.map.closePopup();
+    renderPinList(window.filter.getFilterPins(pinsData));
+  };
 
-      window.backend.getData(function (response) {
+  var renderPinList = function (data) {
+    var fragment = document.createDocumentFragment();
+    var dataLength = (data.length < MAX_DISPLAY_PIN) ? data.length : MAX_DISPLAY_PIN;
 
-        var fragment = document.createDocumentFragment();
-        for (var i = 0; i < response.length; i++) {
-          var pin = renderPin(response[i]);
+    for (var i = 0; i < dataLength; i++) {
+      var pin = renderPin(data[i]);
 
-          pin.addEventListener('click', function (evt) {
-            window.map.openFullInfoPopup(evt, response);
-          });
-
-          fragment.appendChild(pin);
-        }
-
-        mapPinsBlock.appendChild(fragment);
+      pin.addEventListener('click', function (evt) {
+        window.map.openFullInfoPopup(evt, data);
       });
+
+      fragment.appendChild(pin);
+    }
+
+    mapPinsBlock.appendChild(fragment);
+  };
+
+  var onSuccess = function (response) {
+    pinsData = response;
+    renderPinList(pinsData);
+    window.filter.elementsToggle();
+  };
+
+  window.pin = {
+    update: update,
+    createPinsList: function () {
+      window.backend.getData(onSuccess);
     },
-    deletePins: function () {
+
+    delete: function () {
       var pins = document.querySelector('.map__pins').querySelectorAll('.map__pin');
 
       pins.forEach(function (pin) {
         if (!pin.classList.contains('map__pin--main')) {
           pin.remove();
         }
+      });
+    },
+
+    active: function (pin) {
+      pin.classList.add('map__pin--active');
+    },
+
+    inactiveAll: function () {
+      document.querySelectorAll('.map__pin').forEach(function (pin) {
+        pin.classList.remove('map__pin--active');
+        pin.blur();
       });
     }
   };
