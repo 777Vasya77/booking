@@ -2,14 +2,17 @@
 
 (function () {
 
-  var MAP_TOP_BORDER = 130;
-  var MAP_BOTTOM_BORDER = 630;
-
   var adForm = document.querySelector('.ad-form');
   var map = document.querySelector('.map');
   var mapPinMain = document.querySelector('.map__pin--main');
   var mapBlock = document.querySelector('.map');
   var mapFilter = document.querySelector('.map__filters-container');
+  var MapBorder = {
+    top: 130,
+    left: 0,
+    bottom: 630,
+    right: map.offsetWidth - mapPinMain.offsetWidth
+  };
 
   var onPopupEscPress = function (evt) {
     if (window.utils.isEscKeycode(evt.keyCode)) {
@@ -39,8 +42,8 @@
     adForm.classList.remove('ad-form--disabled');
     mapBlock.classList.remove('map--faded');
     window.utils.disabledEToggle(window.form.elements);
-    window.pin.createPinsList();
-    window.filter.elementsToggle();
+    window.pin.createList();
+    window.filters.elementsToggle();
   };
 
   window.form.addAddressToInput(mapPinMain);
@@ -50,21 +53,16 @@
   mapPinMain.addEventListener('mouseup', onMapPinMainMouseUp);
 
   var checkMapBorder = function (shift) {
-    if (mapPinMain.offsetTop - shift.y > MAP_BOTTOM_BORDER) {
-      mapPinMain.style.top = MAP_BOTTOM_BORDER + 'px';
-    } else if (mapPinMain.offsetTop - shift.y < MAP_TOP_BORDER) {
-      mapPinMain.style.top = MAP_TOP_BORDER + 'px';
-    } else {
-      mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + 'px';
-    }
+    var pinMainPosLeft = mapPinMain.offsetLeft - shift.x;
+    var pinMainPosTop = mapPinMain.offsetTop - shift.y;
 
-    if (mapPinMain.offsetLeft - shift.x <= 0) {
-      mapPinMain.style.left = '0px';
-    } else if (mapPinMain.offsetLeft - shift.x > (map.offsetWidth - mapPinMain.offsetWidth)) {
-      mapPinMain.style.left = (map.offsetWidth - mapPinMain.offsetWidth) + 'px';
-    } else {
-      mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + 'px';
-    }
+    pinMainPosLeft = Math.max(pinMainPosLeft, MapBorder.left);
+    pinMainPosLeft = Math.min(pinMainPosLeft, MapBorder.right);
+    mapPinMain.style.left = pinMainPosLeft + 'px';
+
+    pinMainPosTop = Math.max(pinMainPosTop, MapBorder.top);
+    pinMainPosTop = Math.min(pinMainPosTop, MapBorder.bottom);
+    mapPinMain.style.top = pinMainPosTop + 'px';
   };
 
   mapPinMain.addEventListener('mousedown', function (evt) {
@@ -105,7 +103,7 @@
   });
 
   window.map = {
-    openFullInfoPopup: function (evt, adsData) {
+    openPopup: function (evt, adsData) {
 
       window.pin.inactiveAll();
 

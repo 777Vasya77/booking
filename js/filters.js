@@ -106,7 +106,7 @@
     for (var i = 0; i < features.length; i++) {
       if (features[i].checked) {
         pins = pins.filter(function (it) {
-          return it.offer.features.indexOf(features[i].value) >= 0;
+          return it.offer.features.indexOf(features[i].value) !== -1;
         });
       }
     }
@@ -135,8 +135,8 @@
     });
   };
 
-  window.filter = {
-    getFilterPins: getPins,
+  window.filters = {
+    getPins: getPins,
     reset: resetFilters,
     elementsToggle: filterDisableToggle
   };

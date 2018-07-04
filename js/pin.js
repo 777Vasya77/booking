@@ -13,7 +13,7 @@
     var pinElement = mapPinTemplate.cloneNode(true);
     var pinImg = pinElement.querySelector('img');
 
-    pinElement.style.left = pin.location.x + (PIN_WIDTH / 2) + 'px';
+    pinElement.style.left = pin.location.x - (PIN_WIDTH / 2) + 'px';
     pinElement.style.top = pin.location.y - PIN_HEIGHT + 'px';
 
     pinImg.src = pin.author.avatar;
@@ -25,7 +25,7 @@
   var update = function () {
     window.pin.delete();
     window.map.closePopup();
-    renderPinList(window.filter.getFilterPins(pinsData));
+    renderPinList(window.filters.getPins(pinsData));
   };
 
   var renderPinList = function (data) {
@@ -36,7 +36,7 @@
       var pin = renderPin(data[i]);
 
       pin.addEventListener('click', function (evt) {
-        window.map.openFullInfoPopup(evt, data);
+        window.map.openPopup(evt, data);
       });
 
       fragment.appendChild(pin);
@@ -48,12 +48,12 @@
   var onSuccess = function (response) {
     pinsData = response;
     renderPinList(pinsData);
-    window.filter.elementsToggle();
+    window.filters.elementsToggle();
   };
 
   window.pin = {
     update: update,
-    createPinsList: function () {
+    createList: function () {
       window.backend.getData(onSuccess);
     },
 

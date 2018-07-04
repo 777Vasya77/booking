@@ -86,7 +86,7 @@
     window.form.addAddressToInput(mapPinMain);
     window.pin.delete();
     window.map.closePopup();
-    window.filter.reset();
+    window.filters.reset();
     window.utils.disabledEToggle(window.form.elements);
     adForm.classList.add('ad-form--disabled');
     mapBlock.classList.add('map--faded');
