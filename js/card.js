@@ -8,6 +8,7 @@
     'house': 'Дом',
     'bungalo': 'Бунгало'
   };
+
   var mapCardTemplate = document.querySelector('#map-card-template').content.querySelector('.map__card');
 
   var renderFeatures = function (features) {

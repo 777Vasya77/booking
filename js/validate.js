@@ -8,7 +8,6 @@
   var capacity = document.querySelector('#capacity');
 
   window.validate = {
-
     customErrorsMessage: function (input) {
       if (input.validity.valueMissing) {
         input.setCustomValidity('Обязательное поле!');
@@ -40,7 +39,6 @@
         capacity.setCustomValidity('');
       }
     }
-
   };
 
 }());
