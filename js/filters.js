@@ -2,15 +2,15 @@
 
 (function () {
   var DEBOUNCE_TIMEOUT = 500;
-  var Price = {
-    LOW: 10000,
-    HIGH: 50000
+  var PRICES = {
+    low: 10000,
+    high: 50000
   };
-  var Capacity = {
-    ZERO: 0,
-    ONE: 1,
-    TWO: 2,
-    TREE: 3
+  var CAPACITIES = {
+    zero: 0,
+    one: 1,
+    two: 2,
+    tree: 3
   };
 
   var filter = document.querySelector('.map__filters');
@@ -52,17 +52,17 @@
     switch (price.value) {
       case 'middle':
         pins = pins.filter(function (it) {
-          return it.offer.price <= Price.HIGH && it.offer.price >= Price.LOW;
+          return it.offer.price <= PRICES.high && it.offer.price >= PRICES.low;
         });
         break;
       case 'low':
         pins = pins.filter(function (it) {
-          return it.offer.price <= Price.LOW;
+          return it.offer.price <= PRICES.low;
         });
         break;
       case 'high':
         pins = pins.filter(function (it) {
-          return it.offer.price >= Price.HIGH;
+          return it.offer.price >= PRICES.high;
         });
         break;
     }
@@ -70,17 +70,17 @@
     switch (room.value) {
       case '1':
         pins = pins.filter(function (it) {
-          return it.offer.rooms === Capacity.ONE;
+          return it.offer.rooms === CAPACITIES.one;
         });
         break;
       case '2':
         pins = pins.filter(function (it) {
-          return it.offer.rooms === Capacity.TWO;
+          return it.offer.rooms === CAPACITIES.two;
         });
         break;
       case '3':
         pins = pins.filter(function (it) {
-          return it.offer.rooms === Capacity.TREE;
+          return it.offer.rooms === CAPACITIES.tree;
         });
         break;
     }
@@ -88,28 +88,28 @@
     switch (guest.value) {
       case '0':
         pins = pins.filter(function (it) {
-          return it.offer.guests === Capacity.ZERO;
+          return it.offer.guests === CAPACITIES.zero;
         });
         break;
       case '1':
         pins = pins.filter(function (it) {
-          return it.offer.guests === Capacity.ONE;
+          return it.offer.guests === CAPACITIES.one;
         });
         break;
       case '2':
         pins = pins.filter(function (it) {
-          return it.offer.guests === Capacity.TWO;
+          return it.offer.guests === CAPACITIES.two;
         });
         break;
     }
 
-    for (var i = 0; i < features.length; i++) {
-      if (features[i].checked) {
+    features.forEach(function (feature) {
+      if (feature.checked) {
         pins = pins.filter(function (it) {
-          return it.offer.features.indexOf(features[i].value) !== -1;
+          return it.offer.features.indexOf(feature.value) !== -1;
         });
       }
-    }
+    });
 
     return pins;
   };

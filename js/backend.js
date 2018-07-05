@@ -2,20 +2,27 @@
 
 (function () {
 
+  var STATUS_CODE = {
+    success: 200,
+    badRequest: 400,
+    unauthorized: 401,
+    notFound: 404
+  };
+
   var checkStatus = function (xhr, onLoad) {
     var error;
     switch (xhr.status) {
-      case 200:
+      case STATUS_CODE.success:
         onLoad(xhr.response);
         break;
 
-      case 400:
+      case STATUS_CODE.badRequest:
         error = 'Неверный запрос';
         break;
-      case 401:
+      case STATUS_CODE.unauthorized:
         error = 'Пользователь не авторизован';
         break;
-      case 404:
+      case STATUS_CODE.notFound:
         error = 'Ничего не найдено';
         break;
 

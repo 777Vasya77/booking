@@ -7,7 +7,7 @@
   var mapPinMain = document.querySelector('.map__pin--main');
   var mapBlock = document.querySelector('.map');
   var mapFilter = document.querySelector('.map__filters-container');
-  var MapBorder = {
+  var mapBorder = {
     top: 130,
     left: 0,
     bottom: 630,
@@ -56,12 +56,12 @@
     var pinMainPosLeft = mapPinMain.offsetLeft - shift.x;
     var pinMainPosTop = mapPinMain.offsetTop - shift.y;
 
-    pinMainPosLeft = Math.max(pinMainPosLeft, MapBorder.left);
-    pinMainPosLeft = Math.min(pinMainPosLeft, MapBorder.right);
+    pinMainPosLeft = Math.max(pinMainPosLeft, mapBorder.left);
+    pinMainPosLeft = Math.min(pinMainPosLeft, mapBorder.right);
     mapPinMain.style.left = pinMainPosLeft + 'px';
 
-    pinMainPosTop = Math.max(pinMainPosTop, MapBorder.top);
-    pinMainPosTop = Math.min(pinMainPosTop, MapBorder.bottom);
+    pinMainPosTop = Math.max(pinMainPosTop, mapBorder.top);
+    pinMainPosTop = Math.min(pinMainPosTop, mapBorder.bottom);
     mapPinMain.style.top = pinMainPosTop + 'px';
   };
 

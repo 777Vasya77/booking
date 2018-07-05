@@ -23,24 +23,24 @@
   };
 
   var update = function () {
-    window.pin.delete();
+    window.pin.remove();
     window.map.closePopup();
     renderPinList(window.filters.getPins(pinsData));
   };
 
   var renderPinList = function (data) {
     var fragment = document.createDocumentFragment();
-    var dataLength = (data.length < MAX_DISPLAY_PIN) ? data.length : MAX_DISPLAY_PIN;
+    var pins = data.slice(0, MAX_DISPLAY_PIN);
 
-    for (var i = 0; i < dataLength; i++) {
-      var pin = renderPin(data[i]);
+    pins.forEach(function (it) {
+      var pin = renderPin(it);
 
       pin.addEventListener('click', function (evt) {
-        window.map.openPopup(evt, data);
+        window.map.openPopup(evt, pins);
       });
 
       fragment.appendChild(pin);
-    }
+    });
 
     mapPinsBlock.appendChild(fragment);
   };
@@ -57,7 +57,7 @@
       window.backend.getData(onSuccess);
     },
 
-    delete: function () {
+    remove: function () {
       var pins = document.querySelector('.map__pins').querySelectorAll('.map__pin');
 
       pins.forEach(function (pin) {

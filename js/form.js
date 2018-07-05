@@ -2,11 +2,13 @@
 
 (function () {
 
+  var MAIN_PIN_DEFAULT_Y = 570;
+  var MAIN_PIN_DEFAULT_X = 375;
   var PRICE_BY_TYPE = {
-    'palace': 10000,
-    'flat': 1000,
-    'house': 5000,
-    'bungalo': 0
+    palace: 10000,
+    flat: 1000,
+    house: 5000,
+    bungalo: 0
   };
   var PIN_SHARP_END_HEIGHT = 22;
   var adForm = document.querySelector('.ad-form');
@@ -80,11 +82,11 @@
   var formReset = function () {
     adForm.reset();
 
-    mapPinMain.style.left = '570px';
-    mapPinMain.style.top = '375px';
+    mapPinMain.style.left = MAIN_PIN_DEFAULT_Y + 'px';
+    mapPinMain.style.top = MAIN_PIN_DEFAULT_X + 'px';
 
     window.form.addAddressToInput(mapPinMain);
-    window.pin.delete();
+    window.pin.remove();
     window.map.closePopup();
     window.filters.reset();
     window.utils.disabledEToggle(window.form.elements);
